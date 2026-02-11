@@ -42,10 +42,7 @@ const Loans = () => {
             title: "Student Loans",
             description: "Navigate paying for college and managing student debt.",
             links: [
-                { text: "Paying for college", url: "#" },
-                { text: "FAFSA and federal student aid", url: "#" },
-                { text: "Taking out student loans", url: "#" },
-                { text: "Paying off student loans", url: "#" },
+                { text: "Paying for college", url: "/loans/education" },
 
             ],
             picks: [
@@ -59,9 +56,9 @@ const Loans = () => {
             title: "Auto Loans",
             description: "Get on the road with the right auto loan for you.",
             links: [
-                { text: "Best auto loans for good and bad credit", url: "#" },
-                { text: "Best auto loans refinance loans", url: "#" },
-                { text: "Best lease buyout loans", url: "#" },
+
+                { text: "Best auto loans refinance loans", url: "/loans/auto-refinance" },
+
             ],
             picks: [
                 { text: "Auto loan calculator", url: "#" },

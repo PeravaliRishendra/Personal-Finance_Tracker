@@ -22,6 +22,9 @@ import LoanApplication from './pages/LoanApplication';
 import PersonalLoanReviews from './pages/PersonalLoanReviews';
 import LoanReviewDetail from './pages/LoanReviewDetail';
 import PersonalLoanCalculator from './pages/PersonalLoanCalculator';
+import EducationLoan from './pages/EducationLoan';
+import AutoLoanRefinance from './pages/AutoLoanRefinance';
+import AutoLoanApplication from './pages/AutoLoanApplication';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
@@ -96,11 +99,31 @@ function App() {
             <PersonalLoanCalculator />
           </ProtectedRoute>
         } />
+        {/* Education Loan */}
+        <Route path="/loans/education" element={
+          <ProtectedRoute>
+            <EducationLoan />
+          </ProtectedRoute>
+        } />
+
+        {/* Auto Loan Refinance */}
+        <Route path="/loans/auto-refinance" element={
+          <ProtectedRoute>
+            <AutoLoanRefinance />
+          </ProtectedRoute>
+        } />
+
+        {/* Auto Loan Application */}
+        <Route path="/loans/auto-application" element={
+          <ProtectedRoute>
+            <AutoLoanApplication />
+          </ProtectedRoute>
+        } />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </div>
+    </div >
   );
 }
 
