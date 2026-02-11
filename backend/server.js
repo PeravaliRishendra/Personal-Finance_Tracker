@@ -19,12 +19,39 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+/* ===============================
+   ✅ CORS CONFIG (VERY IMPORTANT)
+================================= */
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://personal-finance-tracker-kappa-ten.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
+
+/* ===============================
+   Middleware
+================================= */
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Routes
+/* ===============================
+   Routes
+================================= */
+
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/budgets", budgetRoutes);
@@ -36,7 +63,10 @@ app.use("/api/investment-goals", investmentGoalRoutes);
 app.use("/api/bank", bankRoutes);
 app.use("/api/ocr", ocrRoutes);
 
-// ✅ Health check
+/* ===============================
+   Health Check
+================================= */
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -44,7 +74,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// MongoDB connection
+/* ===============================
+   MongoDB Connection
+================================= */
+
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   "mongodb://127.0.0.1:27017/personal-finance-tracker";
