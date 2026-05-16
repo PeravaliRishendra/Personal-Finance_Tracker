@@ -1,1 +1,1 @@
-export const API_BASE_URL = "http://localhost:5002/api";
+export const API_BASE_URL = "https://personal-finance-tracker-kadz.vercel.app/api";
