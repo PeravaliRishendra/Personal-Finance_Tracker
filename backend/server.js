@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
-// Route imports
+// Routes
 import authRoutes from "./routes/auth.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
 import budgetRoutes from "./routes/budget.routes.js";
@@ -15,23 +15,25 @@ import investmentGoalRoutes from "./routes/investmentGoalRoutes.js";
 import bankRoutes from "./routes/bank.routes.js";
 import ocrRoutes from "./routes/ocr.routes.js";
 
-// Load environment variables
+// Load env
 dotenv.config();
 
 const app = express();
 
 /* ==========================================
-   ✅ TRUST PROXY (important for deployment)
+   TRUST PROXY (Required for Render / Vercel)
 ========================================== */
 app.set("trust proxy", 1);
 
 /* ==========================================
-   ✅ CORS CONFIG (PRODUCTION READY)
+   CORS CONFIG (Production Ready)
 ========================================== */
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "http://localhost:3000",
+  "http://localhost:3001",
   "https://personal-finance-tracker-kappa-ten.vercel.app",
   "https://personal-finance-tracker-038lie8m1-lalithkotas-projects.vercel.app"
 ];
@@ -64,14 +66,14 @@ app.use(
 
 /* ==========================================
    ✅ MIDDLEWARE
-========================================== */
+ ========================================== */
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 /* ==========================================
    ✅ API ROUTES
-========================================== */
+ ========================================== */
 
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
@@ -86,7 +88,7 @@ app.use("/api/ocr", ocrRoutes);
 
 /* ==========================================
    ✅ HEALTH CHECK ROUTE
-========================================== */
+ ========================================== */
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
@@ -99,7 +101,7 @@ app.get("/api/health", (req, res) => {
 
 /* ==========================================
    ❌ GLOBAL ERROR HANDLER
-========================================== */
+ ========================================== */
 
 app.use((err, req, res, next) => {
   console.error("❌ Error:", err.message);
@@ -112,7 +114,7 @@ app.use((err, req, res, next) => {
 
 /* ==========================================
    ✅ 404 HANDLER
-========================================== */
+ ========================================== */
 
 app.use((req, res) => {
   res.status(404).json({
@@ -123,38 +125,52 @@ app.use((req, res) => {
 
 /* ==========================================
    ✅ MONGODB CONNECTION
-========================================== */
+ ========================================== */
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   "mongodb://127.0.0.1:27017/personal-finance-tracker";
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5002;
 
 mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGODB_URI)
   .then(() => {
     console.log("✅ MongoDB connected successfully");
 
-    app.listen(PORT, () => {
+    /* Handle server errors */
+    const server = app.listen(PORT, () => {
       console.log(`🔥 Server running on port ${PORT}`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
+
+    server.on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(`❌ Port ${PORT} already in use`);
+        process.exit(1);
+      } else {
+        console.error("❌ Server error:", err);
+      }
+    });
   })
-  .catch((error) => {
-    console.error("❌ MongoDB connection error:", error.message);
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
     process.exit(1);
   });
 
 /* ==========================================
-   ✅ GRACEFUL SHUTDOWN
+   GRACEFUL SHUTDOWN
 ========================================== */
 
 process.on("SIGINT", async () => {
+  console.log("🛑 Shutting down server...");
   await mongoose.connection.close();
-  console.log("🛑 MongoDB disconnected");
+  console.log("✅ MongoDB disconnected");
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  console.log("🛑 SIGTERM received");
+  await mongoose.connection.close();
   process.exit(0);
 });
