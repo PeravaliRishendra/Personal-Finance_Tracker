@@ -35,7 +35,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://personal-finance-tracker-kappa-ten.vercel.app",
-  "https://personal-finance-tracker-038lie8m1-lalithkotas-projects.vercel.app"
+  "https://personal-finance-tracker-038lie8m1-lalithkotas-projects.vercel.app",
   "https://finance-tracker-rishendra.vercel.app"
 ];
 
